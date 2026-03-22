@@ -1,0 +1,229 @@
+/* ===== DASHBOARD ===== */
+.dashboard-banner {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.banner-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 4px 20px rgba(0, 198, 255, 0.3);
+}
+
+.dashboard-banner h1 {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.banner-role {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  background: var(--glass-bg-hover);
+  transform: translateY(-2px);
+}
+
+.stat-card-icon {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.stat-card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-card-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.stat-card-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.stat-card-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.stat-card-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+/* Section Title */
+.dashboard-section-title {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  margin-bottom: 16px;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.action-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 28px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.action-card:hover {
+  background: var(--glass-bg-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  border-color: rgba(0, 198, 255, 0.2);
+  color: var(--text-color);
+}
+
+.action-icon {
+  font-size: 1.8rem;
+  margin-bottom: 14px;
+}
+
+.action-card h3 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.action-card p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Recent Jobs */
+.recent-jobs {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+.recent-job-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 24px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: background 0.2s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.recent-job-item:last-child {
+  border-bottom: none;
+}
+
+.recent-job-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-color);
+}
+
+.company-avatar.small {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.recent-job-info {
+  flex: 1;
+}
+
+.recent-job-info h4 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.recent-job-info p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .dashboard-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .stats-grid,
+  .quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid,
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+}

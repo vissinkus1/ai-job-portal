@@ -1,0 +1,105 @@
+/* ===== APPLICANTS PAGE ===== */
+.applicants-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.applicant-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--card-radius);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.applicant-card:hover {
+  background: var(--glass-bg-hover);
+}
+
+.applicant-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.applicant-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+}
+
+.applicant-info {
+  flex: 1;
+}
+
+.applicant-info h3 {
+  font-size: 1.05rem;
+  margin-bottom: 2px;
+}
+
+.applicant-info p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.applicant-section {
+  padding-left: 4px;
+}
+
+.applicant-section label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.applicant-section p {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.applicant-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cover-letter-text {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px;
+  white-space: pre-line;
+}
+
+.applicant-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 600px) {
+  .applicant-actions {
+    flex-direction: column;
+  }
+
+  .applicant-actions .glass-button {
+    width: 100%;
+  }
+}

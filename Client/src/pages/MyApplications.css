@@ -1,0 +1,97 @@
+/* ===== MY APPLICATIONS ===== */
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.application-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.application-card:hover {
+  background: var(--glass-bg-hover);
+  transform: translateX(4px);
+}
+
+.app-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-job-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.app-job-title:hover {
+  color: var(--primary-color);
+}
+
+.app-company {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app-date {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-reviewed {
+  background: rgba(0, 198, 255, 0.12);
+  color: var(--primary-color);
+  border: 1px solid rgba(0, 198, 255, 0.3);
+}
+
+.status-accepted {
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+@media (max-width: 600px) {
+  .application-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

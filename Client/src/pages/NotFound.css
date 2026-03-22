@@ -1,0 +1,36 @@
+/* ===== 404 PAGE ===== */
+.notfound-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 150px);
+  text-align: center;
+  padding: 40px;
+}
+
+.notfound-code {
+  font-size: 8rem;
+  font-weight: 900;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 16px;
+  animation: float404 3s ease-in-out infinite;
+}
+
+@keyframes float404 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.notfound-content h1 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.notfound-content p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
