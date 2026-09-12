@@ -12,7 +12,7 @@ export default function EditJob() {
   const toast = useToast();
   const [form, setForm] = useState({
     title: "", company: "", location: "", type: "Full-time",
-    description: "", skills: "", salary: "",
+    experienceLevel: "Entry", description: "", skills: "", salary: "", deadline: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -30,9 +30,11 @@ export default function EditJob() {
         company: job.company || "",
         location: job.location || "",
         type: job.type || "Full-time",
+        experienceLevel: job.experienceLevel || "Entry",
         description: job.description || "",
         skills: (job.skills || []).join(", "),
         salary: job.salary || "",
+        deadline: job.deadline ? job.deadline.slice(0, 10) : "",
       });
     } catch {
       toast.error("Failed to load job");
@@ -50,7 +52,7 @@ export default function EditJob() {
     setSaving(true);
     try {
       const skillsArray = form.skills.split(",").map((s) => s.trim()).filter((s) => s);
-      await api.put(`/jobs/${id}`, { ...form, skills: skillsArray });
+      await api.put(`/jobs/${id}`, { ...form, skills: skillsArray, deadline: form.deadline || undefined });
       toast.success("Job updated successfully!");
       setTimeout(() => navigate("/manage-jobs"), 1000);
     } catch (err) {
@@ -98,8 +100,20 @@ export default function EditJob() {
             <option value="Internship">Internship</option>
           </select>
 
+          <label className="form-label">Experience Level</label>
+          <select name="experienceLevel" className="glass-select" value={form.experienceLevel} onChange={handleChange}>
+            <option value="Entry">Entry Level</option>
+            <option value="Mid">Mid Level</option>
+            <option value="Senior">Senior Level</option>
+            <option value="Lead">Lead / Principal</option>
+          </select>
+
           <label className="form-label">Salary Range</label>
           <input type="text" name="salary" className="glass-input" value={form.salary}
+            onChange={handleChange} />
+
+          <label className="form-label">Application Deadline</label>
+          <input type="date" name="deadline" className="glass-input" value={form.deadline}
             onChange={handleChange} />
 
           <label className="form-label">Skills (comma separated)</label>

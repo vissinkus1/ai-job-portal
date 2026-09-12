@@ -1,0 +1,379 @@
+/* ============ Analytics Page ============ */
+
+.analytics-section {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+  border: 1px solid var(--glass-border);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.section-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  background: rgba(124, 58, 237, 0.08);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.period-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid var(--glass-border);
+}
+
+.period-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.period-btn.active {
+  background: var(--accent-gradient);
+  color: white;
+}
+
+.period-btn:hover:not(.active) {
+  background: rgba(124, 58, 237, 0.1);
+}
+
+/* Horizontal Bar Chart */
+.horizontal-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.h-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.h-bar-label {
+  width: 120px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-color);
+  flex-shrink: 0;
+  text-transform: capitalize;
+}
+
+.h-bar-track {
+  flex: 1;
+  height: 28px;
+  background: rgba(124, 58, 237, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.h-bar-fill {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 8px;
+  animation: barGrow 0.6s ease-out both;
+  min-width: 4px;
+}
+
+@keyframes barGrow {
+  from { width: 0 !important; }
+}
+
+.h-bar-value {
+  width: 40px;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* Demand Chart */
+.demand-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 180px;
+  padding-top: 20px;
+}
+
+.demand-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.demand-value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.demand-bar {
+  width: 100%;
+  max-width: 50px;
+  background: var(--accent-gradient);
+  border-radius: 6px 6px 2px 2px;
+  transition: height 0.5s ease;
+  min-height: 4px;
+}
+
+.demand-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Two Column Layout */
+.analytics-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .analytics-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Skill Value Grid */
+.skill-value-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.skill-value-card {
+  background: rgba(124, 58, 237, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.skill-value-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.12);
+}
+
+.skill-value-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.skill-value-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.skill-value-badge {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.skill-value-badge.hot {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+
+.skill-value-badge.warm {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.skill-value-badge.cool {
+  background: rgba(0, 198, 255, 0.12);
+  color: #00c6ff;
+}
+
+.skill-value-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.skill-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.skill-stat-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.skill-stat-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skill-value-bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background: rgba(124, 58, 237, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-value-bar {
+  height: 100%;
+  background: var(--accent-gradient);
+  border-radius: 3px;
+  transition: width 0.6s ease-out;
+}
+
+/* Top Companies */
+.top-companies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top-company-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.top-company-row:hover {
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.company-rank {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  width: 28px;
+}
+
+.company-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+/* Salary Grid */
+.salary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.salary-card {
+  background: rgba(34, 197, 94, 0.04);
+  border: 1px solid rgba(34, 197, 94, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.salary-card:hover {
+  transform: translateY(-2px);
+}
+
+.salary-card h4 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+
+.salary-range {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.salary-avg {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #22c55e;
+}
+
+.salary-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.salary-minmax {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.salary-jobs {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background: rgba(34, 197, 94, 0.08);
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+/* Empty State */
+.analytics-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* CTA */
+.analytics-cta {
+  text-align: center;
+  padding: 40px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px dashed rgba(124, 58, 237, 0.3);
+}
+
+.analytics-cta h3 {
+  margin: 0 0 8px;
+}
+
+.analytics-cta p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}

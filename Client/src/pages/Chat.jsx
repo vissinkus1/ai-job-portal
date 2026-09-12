@@ -2,10 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import api from "../services/api";
+import { SERVER_URL } from "../config/apiConfig";
 import "../App.css";
 import "./Chat.css";
-
-const socket = io("http://localhost:5000");
 
 export default function Chat() {
   const [searchParams] = useSearchParams();
@@ -17,7 +16,18 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [myId, setMyId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState(null);
   const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
+
+  // Connect socket once on mount, disconnect on unmount
+  useEffect(() => {
+    socketRef.current = io(SERVER_URL);
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -25,10 +35,10 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    if (myId) {
-      socket.emit("join", myId);
+    if (myId && socketRef.current) {
+      socketRef.current.emit("join", myId);
 
-      socket.on("newMessage", (msg) => {
+      const handleNewMessage = (msg) => {
         if (
           msg.sender === activeChat ||
           msg.receiver === activeChat
@@ -36,9 +46,25 @@ export default function Chat() {
           setMessages((prev) => [...prev, msg]);
         }
         fetchConversations();
-      });
+      };
 
-      return () => socket.off("newMessage");
+      socketRef.current.on("newMessage", handleNewMessage);
+
+      // Typing indicator handlers
+      const handleTyping = ({ senderId }) => {
+        if (senderId === activeChat) setIsTyping(true);
+      };
+      const handleStopTyping = ({ senderId }) => {
+        if (senderId === activeChat) setIsTyping(false);
+      };
+      socketRef.current.on("userTyping", handleTyping);
+      socketRef.current.on("userStopTyping", handleStopTyping);
+
+      return () => {
+        socketRef.current?.off("newMessage", handleNewMessage);
+        socketRef.current?.off("userTyping", handleTyping);
+        socketRef.current?.off("userStopTyping", handleStopTyping);
+      };
     }
   }, [myId, activeChat]);
 
@@ -97,10 +123,11 @@ export default function Chat() {
       const res = await api.post(`/chat/${activeChat}`, { content: input.trim() });
       setMessages((prev) => [...prev, res.data]);
       setInput("");
-      socket.emit("sendMessage", {
+      socketRef.current?.emit("sendMessage", {
         ...res.data,
         receiverId: activeChat,
       });
+      socketRef.current?.emit("stopTyping", { senderId: myId, receiverId: activeChat });
       fetchConversations();
     } catch {
       // ignore
@@ -111,6 +138,28 @@ export default function Chat() {
     return new Date(date).toLocaleTimeString("en-US", {
       hour: "numeric", minute: "2-digit", hour12: true,
     });
+  };
+
+  const getDateLabel = (date) => {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (d.toDateString() === today.toDateString()) return "Today";
+    if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+    if (activeChat && myId && socketRef.current) {
+      socketRef.current.emit("typing", { senderId: myId, receiverId: activeChat });
+      if (typingTimeout) clearTimeout(typingTimeout);
+      setTypingTimeout(setTimeout(() => {
+        socketRef.current?.emit("stopTyping", { senderId: myId, receiverId: activeChat });
+      }, 1500));
+    }
   };
 
   if (loading) {
@@ -177,15 +226,30 @@ export default function Chat() {
                   <p>Start the conversation! 👋</p>
                 </div>
               ) : (
-                messages.map((msg, i) => (
-                  <div
-                    key={msg._id || i}
-                    className={`chat-bubble ${msg.sender === myId ? "sent" : "received"}`}
-                  >
-                    <p>{msg.content}</p>
-                    <span className="chat-time">{formatTime(msg.createdAt)}</span>
+                messages.map((msg, i) => {
+                  const showDate = i === 0 ||
+                    getDateLabel(msg.createdAt) !== getDateLabel(messages[i - 1].createdAt);
+                  return (
+                    <div key={msg._id || i}>
+                      {showDate && (
+                        <div className="chat-date-divider">
+                          <span>{getDateLabel(msg.createdAt)}</span>
+                        </div>
+                      )}
+                      <div className={`chat-bubble ${msg.sender === myId ? "sent" : "received"}`}>
+                        <p>{msg.content}</p>
+                        <span className="chat-time">{formatTime(msg.createdAt)}</span>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+              {isTyping && (
+                <div className="chat-bubble received typing-bubble">
+                  <div className="typing-dots">
+                    <span /><span /><span />
                   </div>
-                ))
+                </div>
               )}
               <div ref={messagesEndRef} />
             </div>
@@ -196,7 +260,7 @@ export default function Chat() {
                 className="glass-input"
                 placeholder="Type a message..."
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={handleInputChange}
               />
               <button type="submit" className="glass-button" disabled={!input.trim()}>
                 Send

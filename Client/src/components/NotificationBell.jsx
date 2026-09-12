@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
 import api from "../services/api";
+import { SERVER_URL } from "../config/apiConfig";
 import "./NotificationBell.css";
 
 export default function NotificationBell() {
@@ -8,11 +10,36 @@ export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
   const bellRef = useRef(null);
+  const socketRef = useRef(null);
+  const myIdRef = useRef(null);
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // Poll every 15s
-    return () => clearInterval(interval);
+
+    // Setup socket for real-time notifications
+    socketRef.current = io(SERVER_URL);
+
+    // Get user ID and join room
+    api.get("/profile/me")
+      .then((res) => {
+        myIdRef.current = res.data._id;
+        socketRef.current.emit("join", res.data._id);
+      })
+      .catch(() => {});
+
+    // Listen for real-time notifications
+    socketRef.current.on("newNotification", (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+    });
+
+    // Fallback polling every 30s (reduced from 15s since we have real-time now)
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => {
+      clearInterval(interval);
+      socketRef.current?.disconnect();
+    };
   }, []);
 
   useEffect(() => {

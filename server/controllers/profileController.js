@@ -16,7 +16,7 @@ exports.getProfile = async (req, res) => {
 
 // PUT /api/profile/me — Update profile fields
 exports.updateProfile = async (req, res) => {
-    const { name, bio, skills, phone, role } = req.body;
+    const { name, bio, skills, phone, role, preferences } = req.body;
 
     try {
         const updateFields = {};
@@ -26,6 +26,14 @@ exports.updateProfile = async (req, res) => {
         if (phone !== undefined) updateFields.phone = phone;
         if (role !== undefined && ["seeker", "employer"].includes(role)) {
             updateFields.role = role;
+        }
+        if (preferences !== undefined) {
+            updateFields.preferences = {
+                locations: preferences.locations || [],
+                jobTypes: preferences.jobTypes || [],
+                minSalary: preferences.minSalary || undefined,
+                remotePreference: preferences.remotePreference || "any",
+            };
         }
 
         const user = await User.findByIdAndUpdate(

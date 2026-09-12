@@ -21,9 +21,10 @@ exports.forgotPassword = async (req, res) => {
         // Send via email
         await sendResetCodeEmail(user.email, code);
 
+        const isDev = process.env.NODE_ENV !== "production" || !process.env.EMAIL_PASS;
         res.json({
-            message: "Reset code generated. Check your email.",
-            code, // We can keep this for dev viewing in frontend, or remove for strict security
+            message: "Reset code sent to your email.",
+            ...(isDev ? { code } : {})
         });
     } catch (error) {
         console.error(error.message);

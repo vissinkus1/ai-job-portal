@@ -31,10 +31,14 @@ exports.getConversations = async (req, res) => {
             }
         }
 
-        // Populate user info
+        // Bulk fetch all conversation partner users in ONE query (fixes N+1)
+        const otherIds = [...conversationMap.keys()];
+        const users = await User.find({ _id: { $in: otherIds } }).select("name email role profilePicture");
+        const userMap = new Map(users.map((u) => [u._id.toString(), u]));
+
         const convos = [];
         for (const [otherId, data] of conversationMap) {
-            const user = await User.findById(otherId).select("name email role");
+            const user = userMap.get(otherId);
             if (user) {
                 convos.push({ ...data, user });
             }

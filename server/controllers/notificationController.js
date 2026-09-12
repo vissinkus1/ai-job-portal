@@ -32,10 +32,25 @@ exports.markAllRead = async (req, res) => {
 };
 
 // Helper: create notification (used internally)
-exports.createNotification = async ({ user, type, title, message, link }) => {
+// Pass optional `io` from req.app.get("io") for real-time push
+exports.createNotification = async ({ user, type, title, message, link, io }) => {
     try {
         const notification = new Notification({ user, type, title, message, link });
         await notification.save();
+
+        // Push real-time notification via Socket.io if available
+        if (io) {
+            io.to(user.toString()).emit("newNotification", {
+                _id: notification._id,
+                type,
+                title,
+                message,
+                link,
+                read: false,
+                createdAt: notification.createdAt,
+            });
+        }
+
         return notification;
     } catch (error) {
         console.error("Failed to create notification:", error.message);

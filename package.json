@@ -1,14 +1,28 @@
 {
+  "scripts": {
+    "test": "vitest run server/tests/",
+    "test:watch": "vitest server/tests/"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dompurify": "^3.3.3",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "express-validator": "^7.3.1",
+    "jsdom": "^29.0.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.3",
+    "pdf-parse": "^1.1.1",
     "react-router-dom": "^7.13.0",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "supertest": "^7.2.2",
+    "vitest": "^5.0.0"
   }
 }

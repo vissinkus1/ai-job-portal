@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../services/api";
+import { SERVER_URL } from "../config/apiConfig";
 import NotificationBell from "./NotificationBell";
 import ThemeToggle from "./ThemeToggle";
 import "./Navbar.css";
@@ -10,15 +11,24 @@ function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [role, setRole] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
+  const [userName, setUserName] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (token) {
       api.get("/profile/me")
-        .then((res) => setRole(res.data.role))
-        .catch(() => setRole(null));
+        .then((res) => {
+          setRole(res.data.role);
+          setIsAdmin(!!res.data.isAdmin);
+          setProfilePic(res.data.profilePicture?.filename || null);
+          setUserName(res.data.name || "");
+        })
+        .catch(() => { setRole(null); setIsAdmin(false); setProfilePic(null); });
     } else {
       setRole(null);
+      setProfilePic(null);
     }
   }, [token, location.pathname]);
 
@@ -60,7 +70,10 @@ function Navbar() {
           <>
             <Link to="/dashboard" className={isActive("/dashboard")}>Dashboard</Link>
             <Link to="/recommendations" className={isActive("/recommendations")}>🤖 AI Match</Link>
+            <Link to="/skill-gap" className={isActive("/skill-gap")}>🧠 Skill Gap</Link>
+            <Link to="/resume-score" className={isActive("/resume-score")}>📄 Resume AI</Link>
             <Link to="/chat" className={isActive("/chat")}>💬 Chat</Link>
+            <Link to="/analytics" className={isActive("/analytics")}>📊 Analytics</Link>
 
             {role === "employer" ? (
               <Link to="/manage-jobs" className={isActive("/manage-jobs")}>Manage Jobs</Link>
@@ -68,11 +81,26 @@ function Navbar() {
               <>
                 <Link to="/my-applications" className={isActive("/my-applications")}>My Apps</Link>
                 <Link to="/saved-jobs" className={isActive("/saved-jobs")}>🔖 Saved</Link>
+                <Link to="/job-alerts" className={isActive("/job-alerts")}>🔔 Alerts</Link>
               </>
             )}
 
-            <Link to="/admin" className={isActive("/admin")}>📊 Admin</Link>
-            <Link to="/profile" className={isActive("/profile")}>Profile</Link>
+            {isAdmin && <Link to="/admin" className={isActive("/admin")}>📊 Admin</Link>}
+
+            <Link to="/profile" className={`${isActive("/profile")} nav-profile-link`}>
+              {profilePic ? (
+                <img
+                  src={`${SERVER_URL}/uploads/${profilePic}`}
+                  alt=""
+                  className="nav-avatar-img"
+                />
+              ) : (
+                <span className="nav-avatar-letter">
+                  {userName ? userName.charAt(0).toUpperCase() : "U"}
+                </span>
+              )}
+              Profile
+            </Link>
             <Link to="/settings" className={isActive("/settings")}>⚙️ Settings</Link>
             <div className="nav-divider" />
             <div className="nav-actions-row">

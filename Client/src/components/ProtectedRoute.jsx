@@ -1,14 +1,29 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+const ProtectedRoute = ({ children, roles }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+  const location = useLocation();
 
-  if (!token) {
-    // If not authenticated, redirect to login page
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
-  // If authenticated, render the child components
+  if (!isAuthenticated) {
+    // Redirect to login page, save the location they were trying to go to
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (roles && user && !roles.includes(user.role)) {
+    // If route requires a role they don't have, redirect to dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // If authenticated and authorized, render the child components
   return children;
 };
 

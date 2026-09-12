@@ -1,65 +1,235 @@
-/* ===== COMPANY PROFILE ===== */
-.company-header {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
-  padding: 36px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 32px;
+/* ═══════════════════════════════════════════════════════════════
+   Company Profile — Rich Public View
+   ═══════════════════════════════════════════════════════════════ */
+
+.company-profile__loading {
+    max-width: 700px;
+    margin: 0 auto;
 }
 
-.company-avatar-lg {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  background: var(--accent-gradient);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 800;
-  color: white;
-  flex-shrink: 0;
+/* Hero */
+.company-profile__hero {
+    position: relative;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    margin-bottom: var(--space-7);
 }
 
-.company-header-info h1 {
-  font-size: 1.5rem;
-  margin-bottom: 4px;
+.company-profile__hero-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--accent-gradient);
+    opacity: 0.15;
 }
 
-.company-email {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 8px;
+.company-profile__hero-content {
+    position: relative;
+    display: flex;
+    gap: var(--space-6);
+    align-items: center;
+    padding: var(--space-8);
 }
 
-.company-bio {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 12px;
+.company-profile__logo {
+    width: 100px;
+    height: 100px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--surface-2);
+    border: 3px solid var(--glass-border);
+    box-shadow: var(--shadow-md);
 }
 
-.company-stat-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.company-profile__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.company-section-title {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-  .company-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .company-stat-row {
+.company-profile__logo-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
     justify-content: center;
-  }
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--accent-gradient);
+    color: #fff;
+}
+
+.company-profile__hero-info h1 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+}
+
+.company-profile__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.company-profile__website {
+    font-size: var(--text-sm);
+    color: var(--primary);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.company-profile__website:hover {
+    opacity: 0.8;
+}
+
+/* Body */
+.company-profile__body {
+    max-width: 800px;
+}
+
+.company-profile__section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    padding: var(--space-6);
+    margin-bottom: var(--space-5);
+    animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.company-profile__section:nth-child(2) { animation-delay: 0.05s; }
+.company-profile__section:nth-child(3) { animation-delay: 0.1s; }
+.company-profile__section:nth-child(4) { animation-delay: 0.15s; }
+.company-profile__section:nth-child(5) { animation-delay: 0.2s; }
+
+.company-profile__section h2 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.company-profile__section p {
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+/* Benefits */
+.company-profile__benefits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.company-profile__benefit-tag {
+    padding: var(--space-2) var(--space-4);
+    background: var(--success-light);
+    color: var(--success);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+/* Locations */
+.company-profile__locations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+/* Socials */
+.company-profile__socials {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.company-profile__social-link {
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--primary);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.company-profile__social-link:hover {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+/* Jobs */
+.company-profile__no-jobs {
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--text-muted);
+}
+
+.company-profile__jobs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.company-profile__job-card {
+    display: block;
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-1);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.company-profile__job-card:hover {
+    border-color: var(--primary-light);
+    background: var(--surface-2);
+    transform: translateX(4px);
+}
+
+.company-profile__job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.company-profile__job-header h3 {
+    font-size: var(--text-base);
+    color: var(--text-color);
+}
+
+.company-profile__job-details {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+    .company-profile__hero-content {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--space-6);
+    }
+
+    .company-profile__meta {
+        justify-content: center;
+    }
+
+    .company-profile__socials {
+        flex-wrap: wrap;
+    }
+
+    .company-profile__job-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+
+    .company-profile__job-details {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
 }

@@ -15,26 +15,16 @@ export default function ManageJobs() {
 
   const fetchMyJobs = async () => {
     try {
-      const [profileRes, jobsRes] = await Promise.all([
+      const [profileRes, jobsRes, countsRes] = await Promise.all([
         api.get("/profile/me"),
-        api.get("/jobs"),
+        api.get("/jobs?includeExpired=true"),
+        api.get("/dashboard/job-app-counts"),
       ]);
       const myJobs = jobsRes.data.filter(
         (j) => j.postedBy?._id === profileRes.data._id
       );
       setJobs(myJobs);
-
-      // Fetch applicant counts
-      const counts = {};
-      for (const job of myJobs) {
-        try {
-          const res = await api.get(`/applications/job/${job._id}`);
-          counts[job._id] = res.data.length;
-        } catch {
-          counts[job._id] = 0;
-        }
-      }
-      setAppCounts(counts);
+      setAppCounts(countsRes.data);
     } catch (err) {
       console.error("Failed to fetch jobs");
     } finally {

@@ -1,13 +1,35 @@
-/* ===== DASHBOARD ===== */
+/* ═══════════════════════════════════════════════════════════════
+   Dashboard — Premium Design v2
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Welcome Banner ───────────────────────────────────────────── */
 .dashboard-banner {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
-  padding: 32px;
+  border-radius: 20px;
+  padding: 28px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+
+/* Gradient accent edge */
+.dashboard-banner::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  opacity: 0.6;
+}
+
+.dashboard-banner:hover {
+  border-color: rgba(0, 180, 255, 0.12);
+  box-shadow: var(--shadow-md);
 }
 
 .banner-content {
@@ -16,9 +38,10 @@
   gap: 20px;
 }
 
+/* Avatar */
 .banner-avatar {
-  width: 60px;
-  height: 60px;
+  width: 58px;
+  height: 58px;
   border-radius: 16px;
   background: var(--accent-gradient);
   display: flex;
@@ -26,30 +49,63 @@
   justify-content: center;
   font-size: 1.5rem;
   font-weight: 800;
-  color: white;
-  box-shadow: 0 4px 20px rgba(0, 198, 255, 0.3);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--primary-glow);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.banner-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.banner-online {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 2px solid var(--bg-color);
 }
 
 .dashboard-banner h1 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.banner-welcome {
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .banner-role {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .banner-email {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
-/* Stats */
+.banner-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── Stats Grid ───────────────────────────────────────────────── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
 }
@@ -58,105 +114,197 @@
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  padding: 24px;
-  transition: all 0.3s ease;
+  padding: 22px 24px;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 .stat-card:hover {
   background: var(--glass-bg-hover);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0, 180, 255, 0.1);
+}
+
+.stat-card:hover::before { opacity: 1; }
+
+.stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
 .stat-card-icon {
   font-size: 1.4rem;
-  margin-bottom: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card-trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+}
+
+.stat-card-trend.up {
+  color: var(--success);
+  background: var(--success-light);
+}
+
+.stat-card-trend.neutral {
+  color: var(--text-muted);
+  background: var(--surface-2);
 }
 
 .stat-card-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .stat-card-number {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 800;
   color: var(--text-color);
+  font-family: var(--font-mono);
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .stat-card-label {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  margin-top: 2px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
 }
 
 .stat-card-bar {
   height: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
-  margin-top: 14px;
+  background: var(--surface-2);
+  border-radius: var(--radius-full);
+  margin-top: 16px;
   overflow: hidden;
 }
 
 .stat-card-fill {
   height: 100%;
   background: var(--accent-gradient);
-  border-radius: 2px;
-  transition: width 0.8s ease;
+  border-radius: var(--radius-full);
+  animation: barGrow 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Section Title */
+/* ─── Section Titles ───────────────────────────────────────────── */
 .dashboard-section-title {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--text-color);
   margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Quick Actions */
+/* ─── Quick Actions ────────────────────────────────────────────── */
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
 }
 
 .action-card {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  padding: 28px;
+  padding: 26px 22px;
   text-decoration: none;
   color: var(--text-color);
-  transition: all 0.3s ease;
-  display: block;
+  transition: all var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  transform: scaleX(0);
+  transition: transform var(--transition-base);
+  transform-origin: left;
 }
 
 .action-card:hover {
   background: var(--glass-bg-hover);
   transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  border-color: rgba(0, 198, 255, 0.2);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(0, 180, 255, 0.15);
   color: var(--text-color);
+}
+
+.action-card:hover::before {
+  transform: scaleX(1);
 }
 
 .action-icon {
   font-size: 1.8rem;
-  margin-bottom: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.action-card:hover .action-icon {
+  background: var(--primary-light);
 }
 
 .action-card h3 {
-  font-size: 1rem;
-  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
 }
 
 .action-card p {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
 }
 
-/* Recent Jobs */
+/* ─── Recent Jobs ──────────────────────────────────────────────── */
 .recent-jobs {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
+  border-radius: 18px;
   overflow: hidden;
 }
 
@@ -167,17 +315,32 @@
   padding: 16px 24px;
   text-decoration: none;
   color: var(--text-color);
-  transition: background 0.2s;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background var(--transition-fast);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
 }
 
-.recent-job-item:last-child {
-  border-bottom: none;
+.recent-job-item::after {
+  content: "→";
+  position: absolute;
+  right: 20px;
+  font-size: 0.9rem;
+  color: var(--primary);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all var(--transition-fast);
 }
+
+.recent-job-item:last-child { border-bottom: none; }
 
 .recent-job-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-1);
   color: var(--text-color);
+}
+
+.recent-job-item:hover::after {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .company-avatar.small {
@@ -187,32 +350,44 @@
   font-size: 1rem;
 }
 
-.recent-job-info {
-  flex: 1;
-}
+.recent-job-info { flex: 1; min-width: 0; }
 
 .recent-job-info h4 {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recent-job-info p {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
+  margin: 0;
 }
 
+/* ─── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .dashboard-banner {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+    padding: 22px 20px;
   }
 
   .banner-content {
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .banner-actions {
+    width: 100%;
+  }
+
+  .banner-actions .glass-button {
+    flex: 1;
+    justify-content: center;
   }
 
   .stats-grid,

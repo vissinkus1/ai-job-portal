@@ -1,29 +1,102 @@
-/* ===== RECOMMENDATIONS ===== */
+/* ═══════════════════════════════════════════════════════════════
+   Recommendations Page — Premium Design v2
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── User Skills Bar ──────────────────────────────────────────── */
 .user-skills-bar {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 8px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
   background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
   border-radius: 14px;
-  padding: 14px 20px;
-  margin-bottom: 28px;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 20px;
 }
 
 .skills-label {
-  font-size: 0.85rem;
   font-weight: 600;
+  font-size: 0.85rem;
   color: var(--text-muted);
-  margin-right: 4px;
 }
 
 .edit-skills-link {
-  font-size: 0.82rem;
-  color: var(--primary-color);
   margin-left: auto;
+  font-size: 0.82rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--primary-light);
+  transition: all var(--transition-fast);
 }
 
+.edit-skills-link:hover {
+  background: var(--primary-light);
+}
+
+/* ─── Sort Bar ─────────────────────────────────────────────────── */
+.rec-sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 3px;
+  background: var(--glass-bg);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  border: 1px solid var(--glass-border);
+}
+
+.sort-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.sort-btn.active {
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: 0 2px 8px var(--primary-glow);
+}
+
+.sort-btn:hover:not(.active) {
+  background: var(--surface-2);
+  color: var(--text-color);
+}
+
+.rec-count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.rec-count strong {
+  color: var(--text-color);
+  font-family: var(--font-mono);
+}
+
+/* ─── Recommendation Cards ─────────────────────────────────────── */
 .recommendations-list {
   display: flex;
   flex-direction: column;
@@ -32,31 +105,50 @@
 
 .rec-card {
   background: var(--glass-bg);
+  border-radius: 18px;
   border: 1px solid var(--glass-border);
-  border-radius: var(--card-radius);
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  text-decoration: none;
-  color: var(--text-color);
-  transition: all 0.3s ease;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.rec-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
 .rec-card:hover {
-  background: var(--glass-bg-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-  border-color: rgba(0, 198, 255, 0.2);
-  color: var(--text-color);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(0, 180, 255, 0.12);
+}
+
+.rec-card:hover::before { opacity: 1; }
+
+.rec-card-link {
+  display: flex;
+  gap: 20px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
 }
 
 /* Score Ring */
+.rec-card-left {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
 .rec-score-ring {
   position: relative;
-  width: 70px;
-  height: 70px;
-  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
 }
 
 .score-svg {
@@ -67,7 +159,7 @@
 
 .score-bg {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.08);
+  stroke: var(--surface-2);
   stroke-width: 3;
 }
 
@@ -75,7 +167,7 @@
   fill: none;
   stroke-width: 3;
   stroke-linecap: round;
-  transition: stroke-dasharray 0.8s ease;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .score-text {
@@ -86,58 +178,176 @@
   font-size: 0.85rem;
   font-weight: 800;
   color: var(--text-color);
+  font-family: var(--font-mono);
 }
 
+/* Card Body */
 .rec-card-main {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  min-width: 0;
 }
 
 .rec-card-header {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .rec-card-header h3 {
-  font-size: 1.05rem;
+  margin: 0;
+  font-size: 1.02rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .rec-company {
-  font-size: 0.85rem;
+  margin: 0;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
 .rec-card-tags {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.rec-matched-skills {
+/* Matched & Missing Skills */
+.rec-matched-skills,
+.rec-missing-skills {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
 }
 
-.matched-label {
-  font-size: 0.78rem;
+.matched-label,
+.missing-label {
+  font-size: 0.75rem;
   color: var(--text-muted);
   font-weight: 600;
 }
 
-@media (max-width: 600px) {
-  .rec-card {
+.badge.skill-match {
+  background: var(--success-light);
+  color: var(--success);
+  font-size: 0.72rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge.skill-gap {
+  background: var(--warning-light);
+  color: var(--warning);
+  font-size: 0.72rem;
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+}
+
+/* ─── Score Breakdown ──────────────────────────────────────────── */
+.rec-breakdown-section {
+  border-top: 1px solid var(--glass-border);
+  padding: 0 24px;
+}
+
+.breakdown-toggle {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  text-align: center;
+  font-family: inherit;
+}
+
+.breakdown-toggle:hover {
+  color: var(--primary);
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  padding-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.breakdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.breakdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.breakdown-label {
+  color: var(--text-secondary);
+}
+
+.breakdown-weight {
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+}
+
+.breakdown-bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.breakdown-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.breakdown-score {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .rec-card-link {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
   }
 
-  .rec-score-ring {
-    width: 56px;
-    height: 56px;
+  .breakdown-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sort-buttons {
+    width: 100%;
+    order: 3;
+  }
+
+  .sort-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .rec-count {
+    order: 2;
+    margin-left: 0;
   }
 }

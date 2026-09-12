@@ -9,6 +9,7 @@ function Dashboard() {
   const [user, setUser] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [myApps, setMyApps] = useState([]);
+  const [empStats, setEmpStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,17 +20,27 @@ function Dashboard() {
     try {
       const [profileRes, jobsRes] = await Promise.all([
         api.get("/profile/me"),
-        api.get("/jobs"),
+        api.get("/jobs?limit=5&sort=-createdAt"),
       ]);
       setUser(profileRes.data);
-      setJobs(jobsRes.data);
+      const jobsData = jobsRes.data.jobs || jobsRes.data;
+      setJobs(Array.isArray(jobsData) ? jobsData : []);
 
-      // Fetch applications
-      try {
-        const appsRes = await api.get("/applications/me");
-        setMyApps(appsRes.data);
-      } catch {
-        setMyApps([]);
+      // Fetch role-specific data
+      if (profileRes.data.role === "employer") {
+        try {
+          const statsRes = await api.get("/dashboard/employer-stats");
+          setEmpStats(statsRes.data);
+        } catch { /* ignore */ }
+      } else {
+        try {
+          const [appsRes, seekerRes] = await Promise.all([
+            api.get("/applications/me"),
+            api.get("/dashboard/seeker-stats").catch(() => ({ data: null })),
+          ]);
+          setMyApps(appsRes.data);
+          if (seekerRes.data) setEmpStats(seekerRes.data); // reuse empStats for seeker analytics
+        } catch { setMyApps([]); }
       }
     } catch (err) {
       console.error("Failed to load dashboard data");
@@ -105,10 +116,24 @@ function Dashboard() {
               </div>
             </div>
             <div className="stat-card">
-              <div className="stat-card-icon">💼</div>
+              <div className="stat-card-icon">👥</div>
               <div className="stat-card-info">
-                <span className="stat-card-number">{jobs.length}</span>
-                <span className="stat-card-label">Total Jobs</span>
+                <span className="stat-card-number">{empStats?.totalApplicants || 0}</span>
+                <span className="stat-card-label">Total Applicants</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-icon">📅</div>
+              <div className="stat-card-info">
+                <span className="stat-card-number">{empStats?.interviewCount || 0}</span>
+                <span className="stat-card-label">Interviews</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-icon">📈</div>
+              <div className="stat-card-info">
+                <span className="stat-card-number">{empStats?.acceptanceRate || 0}%</span>
+                <span className="stat-card-label">Accept Rate</span>
               </div>
             </div>
           </>
@@ -135,6 +160,20 @@ function Dashboard() {
                 <span className="stat-card-label">Pending</span>
               </div>
             </div>
+            {empStats && (
+              <>
+                <div className="stat-card">
+                  <div className="stat-card-icon">📊</div>
+                  <div className="stat-card-info">
+                    <span className="stat-card-number">{empStats.responseRate}%</span>
+                    <span className="stat-card-label">Response Rate</span>
+                  </div>
+                  <div className="stat-card-bar">
+                    <div className="stat-card-fill" style={{ width: `${empStats.responseRate}%` }} />
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
 
@@ -147,9 +186,80 @@ function Dashboard() {
         </div>
       </div>
 
+      {/* Employer Pipeline */}
+      {user?.role === "employer" && empStats && (
+        <>
+          <h2 className="dashboard-section-title" style={{ marginTop: "32px" }}>Applicant Pipeline</h2>
+          <div className="stats-grid fade-in-up" style={{ animationDelay: "0.15s" }}>
+            {[
+              { label: "Pending", count: empStats.statusCounts.pending, color: "#f59e0b", emoji: "⏳" },
+              { label: "Reviewed", count: empStats.statusCounts.reviewed, color: "#00c6ff", emoji: "👀" },
+              { label: "Accepted", count: empStats.statusCounts.accepted, color: "#22c55e", emoji: "✅" },
+              { label: "Rejected", count: empStats.statusCounts.rejected, color: "#ef4444", emoji: "❌" },
+            ].map((s) => (
+              <div key={s.label} className="stat-card" style={{ borderLeft: `3px solid ${s.color}` }}>
+                <div className="stat-card-icon">{s.emoji}</div>
+                <div className="stat-card-info">
+                  <span className="stat-card-number">{s.count}</span>
+                  <span className="stat-card-label">{s.label}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {empStats.topJobs?.length > 0 && (
+            <>
+              <h2 className="dashboard-section-title" style={{ marginTop: "24px" }}>Top Jobs by Applicants</h2>
+              <div className="recent-jobs fade-in-up" style={{ animationDelay: "0.2s" }}>
+                {empStats.topJobs.map((j) => (
+                  <Link to={`/manage-jobs/${j.jobId}/applicants`} key={j.jobId} className="recent-job-item">
+                    <div className="recent-job-info">
+                      <h4>{j.title}</h4>
+                    </div>
+                    <span className="badge primary">{j.applicants} applicant{j.applicants !== 1 ? "s" : ""}</span>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
+
+      {/* Seeker Weekly Chart */}
+      {user?.role === "seeker" && empStats?.weeklyData && (
+        <>
+          <h2 className="dashboard-section-title" style={{ marginTop: "32px" }}>📈 Applications This Month</h2>
+          <div className="stat-card fade-in-up" style={{ animationDelay: "0.15s", padding: "24px" }}>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: "12px", height: "100px" }}>
+              {empStats.weeklyData.map((week, i) => {
+                const maxCount = Math.max(...empStats.weeklyData.map(w => w.count), 1);
+                const heightPct = Math.max((week.count / maxCount) * 100, 8);
+                return (
+                  <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-color)" }}>{week.count}</span>
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "50px",
+                        height: `${heightPct}%`,
+                        background: "var(--accent-gradient)",
+                        borderRadius: "6px 6px 2px 2px",
+                        transition: "height 0.5s ease",
+                        minHeight: "6px",
+                      }}
+                    />
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>{week.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Quick Actions */}
-      <h2 className="dashboard-section-title">Quick Actions</h2>
-      <div className="quick-actions fade-in-up" style={{ animationDelay: "0.2s" }}>
+      <h2 className="dashboard-section-title" style={{ marginTop: "32px" }}>Quick Actions</h2>
+      <div className="quick-actions fade-in-up" style={{ animationDelay: "0.25s" }}>
         <Link to="/profile" className="action-card">
           <div className="action-icon">👤</div>
           <h3>Edit Profile</h3>
@@ -160,6 +270,24 @@ function Dashboard() {
           <div className="action-icon">🔍</div>
           <h3>Browse Jobs</h3>
           <p>Find your next opportunity</p>
+        </Link>
+
+        <Link to="/analytics" className="action-card">
+          <div className="action-icon">📊</div>
+          <h3>Skill Analytics</h3>
+          <p>Market trends & insights</p>
+        </Link>
+
+        <Link to="/skill-gap" className="action-card">
+          <div className="action-icon">🧠</div>
+          <h3>Skill Gap Analysis</h3>
+          <p>AI-powered career roadmap</p>
+        </Link>
+
+        <Link to="/resume-score" className="action-card">
+          <div className="action-icon">📄</div>
+          <h3>Resume AI Score</h3>
+          <p>ATS check & optimization</p>
         </Link>
 
         {user?.role === "employer" ? (
@@ -176,11 +304,18 @@ function Dashboard() {
             </Link>
           </>
         ) : (
-          <Link to="/my-applications" className="action-card">
-            <div className="action-icon">📨</div>
-            <h3>My Applications</h3>
-            <p>Track your submissions</p>
-          </Link>
+          <>
+            <Link to="/my-applications" className="action-card">
+              <div className="action-icon">📨</div>
+              <h3>My Applications</h3>
+              <p>Track your submissions</p>
+            </Link>
+            <Link to="/job-alerts" className="action-card">
+              <div className="action-icon">🔔</div>
+              <h3>Job Alerts</h3>
+              <p>Get notified of new matches</p>
+            </Link>
+          </>
         )}
       </div>
 

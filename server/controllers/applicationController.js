@@ -2,6 +2,7 @@ const Application = require("../models/Application");
 const Job = require("../models/Job");
 const User = require("../models/User");
 const { createNotification } = require("./notificationController");
+const { sendApplicationStatusEmail } = require("../utils/emailService");
 
 // POST /api/applications/:jobId — Apply to a job
 exports.applyToJob = async (req, res) => {
@@ -23,6 +24,11 @@ exports.applyToJob = async (req, res) => {
             return res.status(400).json({ message: "You have already applied to this job" });
         }
 
+        // Prevent applying to own job
+        if (job.postedBy.toString() === req.user.id) {
+            return res.status(400).json({ message: "You cannot apply to your own job" });
+        }
+
         const application = new Application({
             job: req.params.jobId,
             applicant: req.user.id,
@@ -39,6 +45,7 @@ exports.applyToJob = async (req, res) => {
             title: "New Application",
             message: `${applicant?.name || "Someone"} applied to your job: ${job.title}`,
             link: `/manage-jobs/${job._id}/applicants`,
+            io: req.app.get("io"),
         });
 
         res.status(201).json({ message: "Application submitted successfully", application });
@@ -68,7 +75,6 @@ exports.getMyApplications = async (req, res) => {
 // GET /api/applications/job/:jobId — Applicants for a job (employer)
 exports.getJobApplicants = async (req, res) => {
     try {
-        // Verify the user owns this job
         const job = await Job.findById(req.params.jobId);
         if (!job) {
             return res.status(404).json({ message: "Job not found" });
@@ -78,10 +84,11 @@ exports.getJobApplicants = async (req, res) => {
         }
 
         const applications = await Application.find({ job: req.params.jobId })
-            .populate("applicant", "name email bio skills phone role")
+            .populate("applicant", "name email bio skills phone role resume profilePicture")
             .sort({ appliedAt: -1 });
 
-        res.json(applications);
+        // Return job skills so frontend can compute AI match scores
+        res.json({ applications, jobSkills: job.skills || [] });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server error" });
@@ -102,7 +109,6 @@ exports.updateApplicationStatus = async (req, res) => {
             return res.status(404).json({ message: "Application not found" });
         }
 
-        // Verify the user owns the job
         if (application.job.postedBy.toString() !== req.user.id) {
             return res.status(401).json({ message: "Not authorized" });
         }
@@ -110,7 +116,7 @@ exports.updateApplicationStatus = async (req, res) => {
         application.status = status;
         await application.save();
 
-        // Notify applicant
+        // Notify applicant via in-app notification
         const statusLabels = { reviewed: "reviewed", accepted: "accepted 🎉", rejected: "rejected" };
         createNotification({
             user: application.applicant,
@@ -118,7 +124,19 @@ exports.updateApplicationStatus = async (req, res) => {
             title: `Application ${statusLabels[status] || status}`,
             message: `Your application for "${application.job.title}" has been ${statusLabels[status] || status}`,
             link: "/my-applications",
+            io: req.app.get("io"),
         });
+
+        // Send email notification to applicant
+        const applicantUser = await User.findById(application.applicant);
+        if (applicantUser) {
+            sendApplicationStatusEmail(
+                applicantUser.email,
+                applicantUser.name,
+                application.job.title,
+                status
+            );
+        }
 
         res.json({ message: "Status updated", application });
     } catch (error) {
@@ -169,6 +187,53 @@ exports.exportApplicants = async (req, res) => {
         res.setHeader("Content-Type", "text/csv");
         res.setHeader("Content-Disposition", `attachment; filename=applicants-${req.params.jobId}.csv`);
         res.send(csv);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// DELETE /api/applications/:id — Withdraw application (seeker, only pending)
+exports.withdrawApplication = async (req, res) => {
+    try {
+        const application = await Application.findById(req.params.id);
+        if (!application) {
+            return res.status(404).json({ message: "Application not found" });
+        }
+
+        if (application.applicant.toString() !== req.user.id) {
+            return res.status(401).json({ message: "Not authorized" });
+        }
+
+        if (application.status !== "pending") {
+            return res.status(400).json({ message: "Can only withdraw pending applications" });
+        }
+
+        await Application.findByIdAndDelete(req.params.id);
+        res.json({ message: "Application withdrawn successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// PUT /api/applications/:id/notes — Employer saves private notes on an applicant
+exports.updateNotes = async (req, res) => {
+    try {
+        const application = await Application.findById(req.params.id).populate("job", "postedBy");
+        if (!application) {
+            return res.status(404).json({ message: "Application not found" });
+        }
+
+        // Only the employer who posted the job can add notes
+        if (application.job.postedBy.toString() !== req.user.id) {
+            return res.status(403).json({ message: "Not authorized to add notes" });
+        }
+
+        application.employerNotes = req.body.notes || "";
+        await application.save();
+
+        res.json({ message: "Notes saved", employerNotes: application.employerNotes });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server error" });

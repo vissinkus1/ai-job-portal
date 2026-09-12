@@ -1,115 +1,190 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../services/api";
-import "../App.css";
+import EmptyState from "../components/EmptyState";
 import "./CompanyProfile.css";
 
 export default function CompanyProfile() {
-  const { id } = useParams();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+    const { id } = useParams();
+    const [company, setCompany] = useState(null);
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchCompany();
-  }, [id]);
+    useEffect(() => {
+        const loadCompany = async () => {
+            try {
+                // Try fetching by company ID first, then by owner user ID
+                let res;
+                try {
+                    res = await api.get(`/company/${id}`);
+                } catch {
+                    res = await api.get(`/company/by-owner/${id}`);
+                }
+                setCompany(res.data.company);
+                setJobs(res.data.jobs || []);
+            } catch (err) {
+                setError("Company profile not found");
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadCompany();
+    }, [id]);
 
-  const fetchCompany = async () => {
-    try {
-      const res = await api.get(`/company/${id}`);
-      setData(res.data);
-    } catch {
-      setData(null);
-    } finally {
-      setLoading(false);
+    if (loading) {
+        return (
+            <div className="company-profile page-container">
+                <div className="company-profile__loading">
+                    <div className="skeleton" style={{ height: 200, borderRadius: "var(--radius-xl)" }} />
+                    <div className="skeleton skeleton-text long" style={{ marginTop: 20 }} />
+                    <div className="skeleton skeleton-text medium" />
+                    <div className="skeleton skeleton-text short" />
+                </div>
+            </div>
+        );
     }
-  };
 
-  if (loading) {
+    if (error || !company) {
+        return (
+            <div className="company-profile page-container">
+                <EmptyState
+                    icon="search"
+                    title="Company Not Found"
+                    description="This company profile doesn't exist or hasn't been set up yet."
+                    actionLabel="Browse Jobs"
+                    actionTo="/jobs"
+                />
+            </div>
+        );
+    }
+
+    const logoUrl = company.logo?.filename
+        ? `${api.defaults.baseURL.replace('/api', '')}/uploads/${company.logo.filename}`
+        : null;
+
     return (
-      <div className="loading-container">
-        <div className="spinner" />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="page-container">
-        <div className="empty-state">
-          <div className="empty-icon">🏢</div>
-          <h3>Company not found</h3>
-          <Link to="/jobs" className="glass-button small" style={{ marginTop: 16, display: "inline-block" }}>
-            Browse Jobs
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const { employer, jobs, totalJobs } = data;
-
-  return (
-    <div className="page-container">
-      <div className="company-header fade-in-up">
-        <div className="company-avatar-lg">
-          {employer.name?.charAt(0).toUpperCase() || "?"}
-        </div>
-        <div className="company-header-info">
-          <h1>{employer.name}</h1>
-          <p className="company-email">{employer.email}</p>
-          {employer.bio && <p className="company-bio">{employer.bio}</p>}
-          <div className="company-stat-row">
-            <span className="badge primary">👔 Employer</span>
-            <span className="badge secondary">{totalJobs} Job{totalJobs !== 1 ? "s" : ""} Posted</span>
-            {employer.createdAt && (
-              <span className="badge" style={{ background: "rgba(255,255,255,0.06)" }}>
-                Joined {new Date(employer.createdAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <h2 className="company-section-title">Posted Jobs</h2>
-
-      {jobs.length === 0 ? (
-        <div className="empty-state">
-          <p>No jobs posted yet</p>
-        </div>
-      ) : (
-        <div className="jobs-grid">
-          {jobs.map((job, i) => (
-            <Link
-              to={`/jobs/${job._id}`}
-              key={job._id}
-              className="job-card fade-in-up"
-              style={{ animationDelay: `${i * 0.04}s` }}
-            >
-              <div className="job-card-header">
-                <div className="company-avatar">{job.company.charAt(0).toUpperCase()}</div>
-                <div className="job-card-meta">
-                  <h3 className="job-title">{job.title}</h3>
-                  <p className="job-company">{job.company}</p>
+        <div className="company-profile page-container">
+            {/* Hero Section */}
+            <div className="company-profile__hero">
+                <div className="company-profile__hero-bg" />
+                <div className="company-profile__hero-content">
+                    <div className="company-profile__logo">
+                        {logoUrl ? (
+                            <img src={logoUrl} alt={company.name} />
+                        ) : (
+                            <div className="company-profile__logo-fallback">
+                                {company.name?.charAt(0)?.toUpperCase() || "C"}
+                            </div>
+                        )}
+                    </div>
+                    <div className="company-profile__hero-info">
+                        <h1>{company.name}</h1>
+                        <div className="company-profile__meta">
+                            {company.industry && <span className="badge badge--info">{company.industry}</span>}
+                            {company.size && <span className="badge badge--info">👥 {company.size} employees</span>}
+                            {company.founded && <span className="badge badge--info">📅 Founded {company.founded}</span>}
+                        </div>
+                        {company.website && (
+                            <a href={company.website} target="_blank" rel="noopener noreferrer" className="company-profile__website">
+                                🔗 {company.website.replace(/^https?:\/\//, "")}
+                            </a>
+                        )}
+                    </div>
                 </div>
-              </div>
-              <div className="job-card-tags">
-                <span className="badge primary">{job.type || "Full-time"}</span>
-                <span className="job-location">📍 {job.location}</span>
-              </div>
-              {job.skills?.length > 0 && (
-                <div className="job-skills">
-                  {job.skills.slice(0, 4).map((s, j) => (
-                    <span key={j} className="skill-tag">{s}</span>
-                  ))}
-                </div>
-              )}
-              <div className="job-card-footer">
-                <span className="job-salary">{job.salary || "Not disclosed"}</span>
-              </div>
-            </Link>
-          ))}
+            </div>
+
+            <div className="company-profile__body">
+                {/* About Section */}
+                {company.description && (
+                    <section className="company-profile__section">
+                        <h2>About</h2>
+                        <p>{company.description}</p>
+                    </section>
+                )}
+
+                {/* Culture Section */}
+                {company.culture && (
+                    <section className="company-profile__section">
+                        <h2>🌟 Culture & Values</h2>
+                        <p>{company.culture}</p>
+                    </section>
+                )}
+
+                {/* Benefits */}
+                {company.benefits?.length > 0 && (
+                    <section className="company-profile__section">
+                        <h2>🎁 Benefits & Perks</h2>
+                        <div className="company-profile__benefits">
+                            {company.benefits.map((benefit, i) => (
+                                <span key={i} className="company-profile__benefit-tag">
+                                    {benefit}
+                                </span>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Locations */}
+                {company.locations?.length > 0 && (
+                    <section className="company-profile__section">
+                        <h2>📍 Locations</h2>
+                        <div className="company-profile__locations">
+                            {company.locations.map((loc, i) => (
+                                <span key={i} className="badge badge--info">{loc}</span>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Social Links */}
+                {(company.socialLinks?.linkedin || company.socialLinks?.twitter || company.socialLinks?.github) && (
+                    <section className="company-profile__section">
+                        <h2>🔗 Connect</h2>
+                        <div className="company-profile__socials">
+                            {company.socialLinks.linkedin && (
+                                <a href={company.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="company-profile__social-link">
+                                    LinkedIn ↗
+                                </a>
+                            )}
+                            {company.socialLinks.twitter && (
+                                <a href={company.socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="company-profile__social-link">
+                                    Twitter ↗
+                                </a>
+                            )}
+                            {company.socialLinks.github && (
+                                <a href={company.socialLinks.github} target="_blank" rel="noopener noreferrer" className="company-profile__social-link">
+                                    GitHub ↗
+                                </a>
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* Open Positions */}
+                <section className="company-profile__section">
+                    <h2>💼 Open Positions ({jobs.length})</h2>
+                    {jobs.length === 0 ? (
+                        <p className="company-profile__no-jobs">No open positions right now.</p>
+                    ) : (
+                        <div className="company-profile__jobs">
+                            {jobs.map((job) => (
+                                <Link to={`/jobs/${job._id}`} key={job._id} className="company-profile__job-card">
+                                    <div className="company-profile__job-header">
+                                        <h3>{job.title}</h3>
+                                        <span className="badge badge--info">{job.type}</span>
+                                    </div>
+                                    <div className="company-profile__job-details">
+                                        <span>📍 {job.location}</span>
+                                        <span>📊 {job.experienceLevel}</span>
+                                        {job.salary && job.salary !== "Not disclosed" && <span>💰 {job.salary}</span>}
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
         </div>
-      )}
-    </div>
-  );
+    );
 }

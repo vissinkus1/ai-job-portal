@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../services/api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "../App.css";
 
 export default function Login() {
@@ -9,6 +9,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("expired") === "1") {
+      setMessage({ type: "error", text: "Session expired. Please log in again." });
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,8 +25,14 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
-      setMessage({ type: "success", text: "Login successful! Redirecting..." });
-      setTimeout(() => navigate("/dashboard"), 800);
+
+      if (res.data.emailVerified === false) {
+        setMessage({ type: "success", text: "Login successful! Please verify your email." });
+        setTimeout(() => navigate(`/verify-email?email=${encodeURIComponent(email)}`), 800);
+      } else {
+        setMessage({ type: "success", text: "Login successful! Redirecting..." });
+        setTimeout(() => navigate("/dashboard"), 800);
+      }
     } catch (err) {
       setMessage({
         type: "error",

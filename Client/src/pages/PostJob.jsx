@@ -12,9 +12,11 @@ export default function PostJob() {
     company: "",
     location: "",
     type: "Full-time",
+    experienceLevel: "Entry",
     description: "",
     skills: "",
     salary: "",
+    deadline: "",
   });
   const [message, setMessage] = useState({ type: "", text: "" });
   const [posting, setPosting] = useState(false);
@@ -37,6 +39,7 @@ export default function PostJob() {
       await api.post("/jobs", {
         ...form,
         skills: skillsArray,
+        deadline: form.deadline || undefined,
       });
 
       setMessage({ type: "success", text: "Job posted successfully!" });
@@ -113,6 +116,19 @@ export default function PostJob() {
             <option value="Internship">Internship</option>
           </select>
 
+          <label className="form-label">Experience Level</label>
+          <select
+            name="experienceLevel"
+            className="glass-select"
+            value={form.experienceLevel}
+            onChange={handleChange}
+          >
+            <option value="Entry">Entry Level</option>
+            <option value="Mid">Mid Level</option>
+            <option value="Senior">Senior Level</option>
+            <option value="Lead">Lead / Principal</option>
+          </select>
+
           <label className="form-label">Salary Range</label>
           <input
             type="text"
@@ -142,6 +158,15 @@ export default function PostJob() {
               )}
             </div>
           )}
+
+          <label className="form-label">Application Deadline</label>
+          <input
+            type="date"
+            name="deadline"
+            className="glass-input"
+            value={form.deadline}
+            onChange={handleChange}
+          />
 
           <label className="form-label">Job Description *</label>
           <div className="quill-container" style={{ marginBottom: "20px" }}>
