@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
         return res.status(400).json({ message: errors.array()[0].msg });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     try {
         // Check if user already exists
@@ -51,6 +51,7 @@ exports.registerUser = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            role: role && ["seeker", "employer"].includes(role) ? role : "seeker",
             verificationCode,
             verificationCodeExpiry: new Date(Date.now() + 30 * 60 * 1000), // 30 min
         });

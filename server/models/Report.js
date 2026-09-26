@@ -38,4 +38,4 @@ const reportSchema = new mongoose.Schema({
 // Prevent duplicate reports from the same user for the same job
 reportSchema.index({ reporter: 1, job: 1 }, { unique: true });
 
-module.exports = mongoose.model("Report", reportSchema);
+module.exports = mongoose.models.Report || mongoose.model("Report", reportSchema);

@@ -4,6 +4,7 @@ const auth = require("../middleware/authMiddleware");
 const { toggleSaveJob, getSavedJobs, checkSaved } = require("../controllers/savedJobController");
 
 router.post("/:jobId", auth, toggleSaveJob);
+router.delete("/:jobId", auth, toggleSaveJob);
 router.get("/", auth, getSavedJobs);
 router.get("/check/:jobId", auth, checkSaved);
 

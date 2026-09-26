@@ -31,9 +31,8 @@ const companySchema = new mongoose.Schema({
 
 companySchema.index({ name: "text" });
 
-companySchema.pre("save", function (next) {
+companySchema.pre("save", function () {
     this.updatedAt = new Date();
-    next();
 });
 
-module.exports = mongoose.model("Company", companySchema);
+module.exports = mongoose.models.Company || mongoose.model("Company", companySchema);

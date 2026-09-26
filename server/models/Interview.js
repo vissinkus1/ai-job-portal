@@ -19,4 +19,4 @@ const interviewSchema = new mongoose.Schema({
 interviewSchema.index({ applicant: 1, job: 1 });
 interviewSchema.index({ employer: 1 });
 
-module.exports = mongoose.model("Interview", interviewSchema);
+module.exports = mongoose.models.Interview || mongoose.model("Interview", interviewSchema);

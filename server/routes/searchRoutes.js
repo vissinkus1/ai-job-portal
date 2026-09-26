@@ -6,6 +6,7 @@ const { autocomplete, searchJobs, getTrending } = require("../controllers/search
 const router = express.Router();
 
 // Public routes (no auth required for searching)
+router.get("/", searchJobs);
 router.get("/autocomplete", autocomplete);
 router.get("/jobs", validators.searchJobs, validate, searchJobs);
 router.get("/trending", getTrending);

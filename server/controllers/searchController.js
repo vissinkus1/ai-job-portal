@@ -54,7 +54,8 @@ exports.searchJobs = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 9;
         const sortParam = req.query.sort || "relevance"; // default to relevance if searching
-        const { search, location, type, experienceLevel, salaryMin, salaryMax } = req.query;
+        const search = req.query.search || req.query.q;
+        const { location, type, experienceLevel, salaryMin, salaryMax } = req.query;
 
         // Build base filter
         const filter = {};

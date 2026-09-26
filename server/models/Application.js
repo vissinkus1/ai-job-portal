@@ -24,7 +24,7 @@ const applicationSchema = new mongoose.Schema({
 applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });
 
 // Track status changes in history
-applicationSchema.pre("save", function (next) {
+applicationSchema.pre("save", function () {
   if (this.isNew) {
     // Initial application
     this.statusHistory = [
@@ -37,7 +37,6 @@ applicationSchema.pre("save", function (next) {
       note: "",
     });
   }
-  next();
 });
 
-module.exports = mongoose.model("Application", applicationSchema);
+module.exports = mongoose.models.Application || mongoose.model("Application", applicationSchema);

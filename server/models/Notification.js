@@ -16,4 +16,4 @@ const notificationSchema = new mongoose.Schema({
 
 notificationSchema.index({ user: 1, createdAt: -1 });
 
-module.exports = mongoose.model("Notification", notificationSchema);
+module.exports = mongoose.models.Notification || mongoose.model("Notification", notificationSchema);

@@ -18,4 +18,4 @@ const jobAlertSchema = new mongoose.Schema({
 jobAlertSchema.index({ user: 1 });
 jobAlertSchema.index({ isActive: 1 });
 
-module.exports = mongoose.model("JobAlert", jobAlertSchema);
+module.exports = mongoose.models.JobAlert || mongoose.model("JobAlert", jobAlertSchema);

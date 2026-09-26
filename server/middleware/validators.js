@@ -256,3 +256,31 @@ exports.mongoId = (paramName = "id") => [
     param(paramName)
         .isMongoId().withMessage(`Invalid ${paramName}`),
 ];
+
+// ─── Application Validation ──────────────────────────────────────
+
+exports.applyToJob = [
+    param("jobId")
+        .isMongoId().withMessage("Invalid job ID"),
+    body("coverLetter")
+        .optional()
+        .trim()
+        .isLength({ max: 2000 }).withMessage("Cover letter must be under 2000 characters"),
+];
+
+exports.updateApplicationStatus = [
+    param("id")
+        .isMongoId().withMessage("Invalid application ID"),
+    body("status")
+        .isIn(["pending", "reviewed", "interview", "accepted", "rejected"])
+        .withMessage("Invalid status value"),
+];
+
+exports.updateApplicationNotes = [
+    param("id")
+        .isMongoId().withMessage("Invalid application ID"),
+    body("notes")
+        .optional()
+        .trim()
+        .isLength({ max: 1000 }).withMessage("Notes must be under 1000 characters"),
+];

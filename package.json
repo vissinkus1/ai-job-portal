@@ -3,7 +3,7 @@
     "start": "node server/index.js",
     "server": "node server/index.js",
     "build": "npm run build --prefix Client",
-    "test": "vitest run server/tests/",
+    "test": "vitest run --fileParallelism=false server/tests/",
     "test:watch": "vitest server/tests/"
   },
   "dependencies": {

@@ -82,4 +82,4 @@ refreshTokenSchema.statics.revokeAllForUser = function (userId) {
   return this.deleteMany({ userId });
 };
 
-module.exports = mongoose.model("RefreshToken", refreshTokenSchema);
+module.exports = mongoose.models.RefreshToken || mongoose.model("RefreshToken", refreshTokenSchema);

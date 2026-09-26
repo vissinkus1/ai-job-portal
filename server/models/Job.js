@@ -35,4 +35,4 @@ jobSchema.index(
   }
 );
 
-module.exports = mongoose.model("Job", jobSchema);
+module.exports = mongoose.models.Job || mongoose.model("Job", jobSchema);
