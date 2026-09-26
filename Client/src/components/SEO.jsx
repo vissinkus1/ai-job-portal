@@ -8,11 +8,11 @@ import { Helmet } from "react-helmet-async";
  */
 export default function SEO({
     title,
-    description = "AI-powered job portal with smart recommendations, resume scoring, and skill gap analysis.",
+    description = "JobMatrix AI — Intelligent MERN job portal with TF-IDF recommendations, resume scoring, and skill gap analysis.",
     ogType = "website",
     ogImage = null,
 }) {
-    const siteName = "AI Job Portal";
+    const siteName = "JobMatrix AI";
     const fullTitle = title ? `${title} | ${siteName}` : siteName;
 
     return (

@@ -43,10 +43,10 @@ async function initTransporter() {
 }
 
 // Helper to get the "from" address (use real email when available)
-function getFromAddress(label = "AI Job Portal") {
+function getFromAddress(label = "JobMatrix AI") {
   const emailUser = process.env.EMAIL_USER;
   if (emailUser) return `"${label}" <${emailUser}>`;
-  return `"${label}" <noreply@aijobportal.com>`;
+  return `"${label}" <noreply@jobmatrix.ai>`;
 }
 
 exports.sendWelcomeEmail = async (toEmail, name) => {
@@ -57,16 +57,16 @@ exports.sendWelcomeEmail = async (toEmail, name) => {
     const info = await mailer.sendMail({
       from: getFromAddress(),
       to: toEmail,
-      subject: "Welcome to AI Job Portal! 🚀",
-      text: `Hi ${name},\n\nWelcome to the AI Job Portal! We're thrilled to have you on board.\n\nStart browsing jobs or building your profile today.\n\nBest,\nThe AI Job Portal Team`,
+      subject: "Welcome to JobMatrix AI! 🚀",
+      text: `Hi ${name},\n\nWelcome to JobMatrix AI! We're thrilled to have you on board.\n\nStart browsing jobs or building your profile today.\n\nBest,\nThe JobMatrix AI Team`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #00c6ff, #7c3aed); padding: 30px; text-align: center; color: white;">
-            <h1 style="margin: 0; font-size: 24px;">Welcome to AI Job Portal! ⚡</h1>
+            <h1 style="margin: 0; font-size: 24px;">Welcome to JobMatrix AI! ⚡</h1>
           </div>
           <div style="padding: 30px; background: #fff; color: #333;">
             <h2 style="margin-top: 0;">Hi ${name},</h2>
-            <p>We're thrilled to have you on board! The AI Job Portal is designed to connect top talent with the best companies using intelligent matching.</p>
+            <p>We're thrilled to have you on board! JobMatrix AI is designed to connect top talent with the best companies using intelligent matching.</p>
             <p>Here are a few things you can do next:</p>
             <ul style="padding-left: 20px;">
               <li>Complete your profile and add your skills</li>
@@ -74,7 +74,7 @@ exports.sendWelcomeEmail = async (toEmail, name) => {
               <li>Browse and save jobs that catch your eye</li>
             </ul>
             <br/>
-            <p>Best regards,<br/><strong>The AI Job Portal Team</strong></p>
+            <p>Best regards,<br/><strong>The JobMatrix AI Team</strong></p>
           </div>
         </div>
       `,
@@ -93,7 +93,7 @@ exports.sendResetCodeEmail = async (toEmail, code) => {
     if (!mailer) return;
 
     const info = await mailer.sendMail({
-      from: getFromAddress("AI Job Portal Security"),
+      from: getFromAddress("JobMatrix AI Security"),
       to: toEmail,
       subject: "Password Reset Code 🔐",
       text: `Your password reset code is: ${code}\n\nThis code will expire in 15 minutes.\nIf you did not request this, please ignore this email.`,
@@ -137,7 +137,7 @@ exports.sendApplicationStatusEmail = async (toEmail, name, jobTitle, status) => 
       from: getFromAddress(),
       to: toEmail,
       subject: `Application ${status.charAt(0).toUpperCase() + status.slice(1)} — ${jobTitle} ${emoji}`,
-      text: `Hi ${name},\n\nYour application for "${jobTitle}" has been ${status}.\n\nLog in to your dashboard for more details.\n\nBest,\nThe AI Job Portal Team`,
+      text: `Hi ${name},\n\nYour application for "${jobTitle}" has been ${status}.\n\nLog in to your dashboard for more details.\n\nBest,\nThe JobMatrix AI Team`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
           <div style="background: ${color}; padding: 25px; text-align: center; color: white;">
@@ -148,7 +148,7 @@ exports.sendApplicationStatusEmail = async (toEmail, name, jobTitle, status) => 
             <p>Your application for <strong>"${jobTitle}"</strong> has been <strong style="color: ${color};">${status}</strong>.</p>
             <p>Log in to your dashboard to see more details.</p>
             <br/>
-            <p>Best regards,<br/><strong>The AI Job Portal Team</strong></p>
+            <p>Best regards,<br/><strong>The JobMatrix AI Team</strong></p>
           </div>
         </div>
       `,
@@ -170,7 +170,7 @@ exports.sendVerificationEmail = async (toEmail, name, code) => {
       from: getFromAddress(),
       to: toEmail,
       subject: "Verify Your Email ✉️",
-      text: `Hi ${name},\n\nYour verification code is: ${code}\n\nThis code expires in 30 minutes.\n\nBest,\nThe AI Job Portal Team`,
+      text: `Hi ${name},\n\nYour verification code is: ${code}\n\nThis code expires in 30 minutes.\n\nBest,\nThe JobMatrix AI Team`,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #00c6ff, #7c3aed); padding: 25px; text-align: center; color: white;">
@@ -214,7 +214,7 @@ exports.sendJobAlertEmail = async (toEmail, name, jobs) => {
       from: getFromAddress(),
       to: toEmail,
       subject: `🔔 ${jobCount} New Job${jobCount > 1 ? "s" : ""} Matching Your Alert!`,
-      text: `Hi ${name},\n\nWe found ${jobCount} new job${jobCount > 1 ? "s" : ""} matching your alert:\n\n${jobs.map((j) => `• ${j.title} at ${j.company} (${j.location})`).join("\n")}\n\nLog in to view details and apply.\n\nBest,\nThe AI Job Portal Team`,
+      text: `Hi ${name},\n\nWe found ${jobCount} new job${jobCount > 1 ? "s" : ""} matching your alert:\n\n${jobs.map((j) => `• ${j.title} at ${j.company} (${j.location})`).join("\n")}\n\nLog in to view details and apply.\n\nBest,\nThe JobMatrix AI Team`,
       html: `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #00c6ff, #7c3aed); padding: 25px; text-align: center; color: white;">

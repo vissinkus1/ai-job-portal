@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-brand">
-          <h3>⚡ AI Job Portal</h3>
+          <h3>⚡ JobMatrix AI</h3>
           <p>Connecting talent with opportunity through intelligent matching.</p>
         </div>
 
@@ -33,7 +33,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} AI Job Portal. Built with ❤️</p>
+        <p>© {new Date().getFullYear()} JobMatrix AI. Built with ❤️</p>
       </div>
     </footer>
   );

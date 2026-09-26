@@ -1,12 +1,14 @@
-# 🚀 AI Job Portal
+# 🚀 JobMatrix AI — Full-Stack Job Portal & Recommendation System
 
-A full-stack, AI-powered job portal built with React and Node.js featuring real-time chat, intelligent job recommendations, resume scoring, and skill gap analysis.
+An enterprise-grade, AI-powered career intelligence platform built with the **MERN Stack** (MongoDB, Express 5, React 19, Node.js 20) and applied **AI/ML algorithms** (TF-IDF vector space modeling, cosine similarity, ATS resume scoring, and skill gap analytics).
 
 🌐 **Live Demo:** [https://ai-job-portal-2zk5.onrender.com/](https://ai-job-portal-2zk5.onrender.com/)
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://ai-job-portal-2zk5.onrender.com/)
+[![MERN Stack](https://img.shields.io/badge/Stack-MERN-00ed64?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![AI / ML](https://img.shields.io/badge/AI%2FML-TF--IDF%20%26%20NLP-ff6f00?style=for-the-badge)](https://en.wikipedia.org/wiki/Tf%E2%80%93idf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 ## ✨ Features

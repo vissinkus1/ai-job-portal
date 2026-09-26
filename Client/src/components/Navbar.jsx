@@ -33,7 +33,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-brand">
-        ⚡ AI Job Portal
+        ⚡ JobMatrix AI
       </Link>
 
       <button

@@ -54,7 +54,7 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <SEO title="Sign In" description="Sign in to your AI Job Portal account to access your dashboard, applications, and AI-powered career tools." />
+      <SEO title="Sign In" description="Sign in to your JobMatrix AI account to access your dashboard, applications, and AI-powered career tools." />
       <div className="glass-card">
         <h2>Welcome Back</h2>
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "20px" }}>

@@ -67,11 +67,11 @@ export default function Register() {
 
   return (
     <div className="auth-container">
-      <SEO title="Create Account" description="Join the AI Job Portal. Create your free account to get AI-powered job recommendations, resume scoring, and skill gap analysis." />
+      <SEO title="Create Account" description="Join JobMatrix AI. Create your free account to get AI-powered job recommendations, resume scoring, and skill gap analysis." />
       <div className="glass-card">
         <h2>Create Account</h2>
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "20px" }}>
-          Join the AI Job Portal
+          Join JobMatrix AI
         </p>
 
         {message.text && (
