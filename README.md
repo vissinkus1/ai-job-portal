@@ -2,6 +2,13 @@
 
 A full-stack, AI-powered job portal built with React and Node.js featuring real-time chat, intelligent job recommendations, resume scoring, and skill gap analysis.
 
+🌐 **Live Demo:** [https://ai-job-portal-2zk5.onrender.com/](https://ai-job-portal-2zk5.onrender.com/)
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://ai-job-portal-2zk5.onrender.com/)
+[![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+
 ## ✨ Features
 
 ### For Job Seekers
@@ -192,13 +199,13 @@ The application supports **both split deployment** (Vercel frontend + Render bac
 
 ---
 
-### Option B: Unified Deployment (Single Web Service / Docker)
+### Option B: Unified Deployment (Single Web Service / Docker on Render)
 
-The backend automatically detects and serves the built React frontend (`Client/dist`) when present:
+The backend automatically builds and serves the React frontend (`Client/dist`) alongside the API in a single Docker container:
 
-1. Build Command: `npm run build` (builds frontend into `Client/dist`)
-2. Start Command: `npm start` (starts Express server serving API + static frontend)
-3. Both API and Frontend run on the single assigned port!
+- **Live URL:** [https://ai-job-portal-2zk5.onrender.com/](https://ai-job-portal-2zk5.onrender.com/)
+- **Dockerfile:** Multi-stage build (builds Vite frontend with Node 20, runs Express in production).
+- Both API (`/api/*`) and Frontend SPA (`/*`) run seamlessly on the assigned port with zero CORS issues!
 
 ---
 
