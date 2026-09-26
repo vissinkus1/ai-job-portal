@@ -3,6 +3,7 @@
     "start": "node server/index.js",
     "server": "node server/index.js",
     "build": "npm run build --prefix Client",
+    "seed:jobs": "node server/scripts/seedJobs.js",
     "test": "vitest run --fileParallelism=false server/tests/",
     "test:watch": "vitest server/tests/"
   },
