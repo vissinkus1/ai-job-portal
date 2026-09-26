@@ -1,8 +1,8 @@
 # Build stage for frontend
 FROM node:20-alpine AS client-build
 WORKDIR /app/Client
-COPY Client/package*.json ./
-RUN npm ci
+COPY Client/package*.json Client/.npmrc* ./
+RUN npm ci --legacy-peer-deps
 COPY Client/ ./
 RUN npm run build
 
@@ -11,8 +11,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install server dependencies
-COPY package*.json ./
-RUN npm ci --omit=dev
+COPY package*.json .npmrc* ./
+RUN npm ci --omit=dev --legacy-peer-deps
 
 # Copy server code
 COPY server/ ./server/
