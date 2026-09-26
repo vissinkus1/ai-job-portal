@@ -13,6 +13,16 @@ export default function NotificationBell() {
   const socketRef = useRef(null);
   const myIdRef = useRef(null);
 
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get("/notifications");
+      setNotifications(res.data.notifications);
+      setUnreadCount(res.data.unreadCount);
+    } catch {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     fetchNotifications();
 
@@ -49,16 +59,6 @@ export default function NotificationBell() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const res = await api.get("/notifications");
-      setNotifications(res.data.notifications);
-      setUnreadCount(res.data.unreadCount);
-    } catch {
-      // ignore
-    }
-  };
 
   const markAllRead = async () => {
     try {

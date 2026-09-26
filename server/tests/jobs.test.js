@@ -17,10 +17,10 @@ let seekerToken;
 let createdJobId;
 
 beforeAll(async () => {
-    const testUri = process.env.MONGO_TEST_URI || "mongodb://localhost:27017/ai_job_portal_test_jobs";
+    const testUri = process.env.MONGO_TEST_URI || "mongodb://127.0.0.1:27017/ai_job_portal_test_jobs";
 
     try {
-        await mongoose.connect(testUri);
+        await mongoose.connect(testUri, { serverSelectionTimeoutMS: 2500 });
     } catch (err) {
         console.warn("⚠️  Could not connect to test MongoDB. Skipping integration tests.");
         return;
