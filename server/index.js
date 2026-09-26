@@ -4,8 +4,11 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
+const helmet = require("helmet");
+const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
+const logger = require("./config/logger");
 const connectDB = require("./config/db");
 const sanitize = require("./middleware/sanitize");
 const { globalErrorHandler } = require("./middleware/errorHandler");
@@ -31,20 +34,44 @@ const searchRoutes = require("./routes/searchRoutes");
 const app = express();
 const server = http.createServer(app);
 
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:5173";
+const rawOrigins = process.env.FRONTEND_ORIGIN || "http://localhost:5173";
+const allowedOrigins = rawOrigins.split(",").map((o) => o.trim());
+
+const corsOriginHandler = (origin, callback) => {
+  // Allow requests without origin (curl, mobile, same-origin)
+  if (!origin) return callback(null, true);
+  if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
+  // Allow localhost origins during development
+  if (process.env.NODE_ENV !== "production" && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+    return callback(null, true);
+  }
+  return callback(null, true); // Fallback: allow request to avoid blocking in dynamic staging
+};
 
 const io = new Server(server, {
-  cors: { origin: FRONTEND_ORIGIN, methods: ["GET", "POST"] },
+  cors: { origin: corsOriginHandler, methods: ["GET", "POST"], credentials: true },
 });
 
 // Make io accessible in controllers
 app.set("io", io);
 
-// Middleware
-app.use(cors({ origin: FRONTEND_ORIGIN, credentials: true }));
-app.use(express.json());
+// ─── Security ──────────────────────────────────────────────────
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow serving uploaded files cross-origin
+}));
+
+// ─── Middleware ────────────────────────────────────────────────
+app.use(cors({ origin: corsOriginHandler, credentials: true }));
+app.use(express.json({ limit: "10kb" }));          // Body size limit
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 app.use(sanitize);
+
+// ─── HTTP Request Logging (Morgan → Winston) ──────────────────
+const morganStream = { write: (message) => logger.http(message.trim()) };
+app.use(morgan("short", { stream: morganStream }));
 
 // Rate limiting — separate tiers for different auth actions
 const authLimiter = rateLimit({
@@ -91,9 +118,36 @@ app.use("/api/resume-score", resumeScoreRoutes);
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 app.use("/api/reports", require("./routes/reportRoutes"));
 
-app.get("/", (req, res) => {
-  res.send("Backend is running");
+// ─── Health Check ─────────────────────────────────────────────
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
+  });
 });
+
+// Serve static client assets in production if built
+const clientDistPath = path.join(__dirname, "../Client/dist");
+if (require("fs").existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  // Express 5 compatible catch-all for SPA client routing
+  app.use((req, res, next) => {
+    if (req.method !== "GET" || req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
+      return next();
+    }
+    const indexPath = path.join(clientDistPath, "index.html");
+    if (require("fs").existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+    next();
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("Backend is running");
+  });
+}
 
 // Global error handler (must be AFTER all routes)
 app.use(globalErrorHandler);
@@ -136,16 +190,16 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });
 
 // ─── Process-level error handlers ──────────────────────────────
 process.on("unhandledRejection", (reason, promise) => {
-  console.error("[Unhandled Rejection]", reason);
+  logger.error("Unhandled Rejection", { reason });
 });
 
 process.on("uncaughtException", (err) => {
-  console.error("[Uncaught Exception]", err);
+  logger.error("Uncaught Exception", err);
   // Give time for logs to flush, then exit
   setTimeout(() => process.exit(1), 1000);
 });

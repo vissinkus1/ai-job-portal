@@ -5,6 +5,7 @@ import "react-quill/dist/quill.snow.css";
 import api from "../services/api";
 import { useToast } from "../components/ToastContext";
 import "../App.css";
+import "./Forms.css";
 
 export default function EditJob() {
   const { id } = useParams();

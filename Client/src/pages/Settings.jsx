@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useToast } from "../components/ToastContext";
 import "../App.css";
+import "./Forms.css";
 
 export default function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");

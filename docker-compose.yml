@@ -1,0 +1,65 @@
+services:
+  # MongoDB
+  mongo:
+    image: mongo:7
+    container_name: ajp-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - ajp-network
+
+  # Backend API
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ajp-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/ai_job_portal
+      - JWT_SECRET=${JWT_SECRET:-change_me_in_production}
+      - EMAIL_USER=${EMAIL_USER:-}
+      - EMAIL_PASS=${EMAIL_PASS:-}
+      - FRONTEND_ORIGIN=http://localhost:5173
+    depends_on:
+      - mongo
+    volumes:
+      - uploads-data:/app/server/uploads
+      - logs-data:/app/logs
+    networks:
+      - ajp-network
+
+  # Frontend (dev mode — use Dockerfile build for production)
+  client:
+    image: node:20-alpine
+    container_name: ajp-client
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./Client:/app
+      - client-node-modules:/app/node_modules
+    environment:
+      - VITE_API_BASE=http://localhost:5000/api
+    depends_on:
+      - server
+    networks:
+      - ajp-network
+
+volumes:
+  mongo-data:
+  uploads-data:
+  logs-data:
+  client-node-modules:
+
+networks:
+  ajp-network:
+    driver: bridge

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
+import SEO from "../components/SEO";
 import "../App.css";
 import "./Home.css";
 
@@ -111,6 +112,10 @@ function Home() {
 
   return (
     <div className="home-page">
+      <SEO
+        title="Find Your Dream Job with AI"
+        description="AI-powered job portal with smart recommendations, resume scoring, skill gap analysis, and real-time chat. Join thousands of job seekers and employers."
+      />
       {/* ─── Hero ─────────────────────────────────────────── */}
       <section className="hero">
         {/* Ambient orbs */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import { useToast } from "../components/ToastContext";
+import SEO from "../components/SEO";
 import "../App.css";
 import "./Jobs.css";
 
@@ -184,6 +185,7 @@ export default function Jobs() {
 
   return (
     <div className="page-container">
+      <SEO title="Browse Jobs" description="Search and filter thousands of jobs. Find full-time, remote, contract, and internship opportunities." />
       <div className="page-header">
         <h1>Browse Jobs</h1>
         <p>Discover your next career opportunity</p>

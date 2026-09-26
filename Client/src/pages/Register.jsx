@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
 import api from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 import "../App.css";
+import "./Auth.css";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -65,6 +67,7 @@ export default function Register() {
 
   return (
     <div className="auth-container">
+      <SEO title="Create Account" description="Join the AI Job Portal. Create your free account to get AI-powered job recommendations, resume scoring, and skill gap analysis." />
       <div className="glass-card">
         <h2>Create Account</h2>
         <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "20px" }}>

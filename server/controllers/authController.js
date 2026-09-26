@@ -109,6 +109,15 @@ exports.loginUser = async (req, res) => {
             token: accessToken,
             message: "Login successful",
             emailVerified: user.emailVerified,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isAdmin: user.isAdmin,
+                emailVerified: user.emailVerified,
+                profilePicture: user.profilePicture,
+            },
         });
     } catch (error) {
         console.error(error.message);
@@ -211,7 +220,20 @@ exports.verifyEmail = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         if (user.emailVerified) {
-            return res.json({ message: "Email is already verified" });
+            const accessToken = generateAccessToken(user.id);
+            return res.json({
+                message: "Email is already verified",
+                token: accessToken,
+                user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                    isAdmin: user.isAdmin,
+                    emailVerified: true,
+                    profilePicture: user.profilePicture,
+                },
+            });
         }
 
         if (user.verificationCode !== code) {
@@ -227,7 +249,23 @@ exports.verifyEmail = async (req, res) => {
         user.verificationCodeExpiry = undefined;
         await user.save();
 
-        res.json({ message: "Email verified successfully! 🎉" });
+        const accessToken = generateAccessToken(user.id);
+        const { rawToken } = await RefreshToken.createToken(user.id, req);
+        res.cookie("refreshToken", rawToken, REFRESH_COOKIE_OPTIONS);
+
+        res.json({
+            message: "Email verified successfully! 🎉",
+            token: accessToken,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                isAdmin: user.isAdmin,
+                emailVerified: true,
+                profilePicture: user.profilePicture,
+            },
+        });
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: "Server error" });

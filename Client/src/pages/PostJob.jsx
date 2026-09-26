@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import api from "../services/api";
 import "../App.css";
+import "./Forms.css";
 
 export default function PostJob() {
   const navigate = useNavigate();

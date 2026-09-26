@@ -29,7 +29,6 @@ const companySchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
 });
 
-companySchema.index({ owner: 1 });
 companySchema.index({ name: "text" });
 
 companySchema.pre("save", function (next) {

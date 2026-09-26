@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import SEO from "../components/SEO";
 import "../App.css";
 import "./Dashboard.css";
 
@@ -72,6 +73,7 @@ function Dashboard() {
 
   return (
     <div className="page-container">
+      <SEO title="Dashboard" description="Your personal dashboard — view applications, manage jobs, and track your career progress." />
       {/* Welcome Banner */}
       <div className="dashboard-banner fade-in-up">
         <div className="banner-content">

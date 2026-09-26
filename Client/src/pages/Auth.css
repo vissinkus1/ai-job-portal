@@ -1,0 +1,86 @@
+/* ═══════════════════════════════════════════════════════════════
+   Auth Pages — Login, Register, ForgotPassword, VerifyEmail
+   Shared premium auth styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Animated background orbs ──────────────────────────────── */
+.auth-container::before,
+.auth-container::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    z-index: 0;
+    animation: authOrb 12s ease-in-out infinite alternate;
+}
+
+.auth-container::before {
+    width: 300px;
+    height: 300px;
+    background: var(--primary, #6366f1);
+    top: -60px;
+    right: -80px;
+}
+
+.auth-container::after {
+    width: 250px;
+    height: 250px;
+    background: var(--accent, #06b6d4);
+    bottom: -60px;
+    left: -80px;
+    animation-delay: -6s;
+}
+
+@keyframes authOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, -20px) scale(1.15); }
+}
+
+/* ─── Card hover lift ───────────────────────────────────────── */
+.auth-container .glass-card {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.auth-container .glass-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22), var(--glass-shadow);
+}
+
+/* ─── Auth links ────────────────────────────────────────────── */
+.auth-container .link {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.auth-container .link:hover {
+    color: var(--primary);
+}
+
+/* ─── Success / Error messages ──────────────────────────────── */
+.auth-container .success-message,
+.auth-container .error-message {
+    border-radius: var(--input-radius, 10px);
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 520px) {
+    .auth-container .glass-card {
+        padding: 28px 20px;
+        margin: 0 12px;
+    }
+
+    .auth-container .glass-card h2 {
+        font-size: 1.5rem;
+    }
+}

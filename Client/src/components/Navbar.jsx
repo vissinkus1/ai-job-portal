@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import { SERVER_URL } from "../config/apiConfig";
 import NotificationBell from "./NotificationBell";
 import ThemeToggle from "./ThemeToggle";
@@ -9,38 +9,24 @@ import "./Navbar.css";
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const [role, setRole] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [profilePic, setProfilePic] = useState(null);
-  const [userName, setUserName] = useState("");
+  const { user, token, isAuthenticated, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      api.get("/profile/me")
-        .then((res) => {
-          setRole(res.data.role);
-          setIsAdmin(!!res.data.isAdmin);
-          setProfilePic(res.data.profilePicture?.filename || null);
-          setUserName(res.data.name || "");
-        })
-        .catch(() => { setRole(null); setIsAdmin(false); setProfilePic(null); });
-    } else {
-      setRole(null);
-      setProfilePic(null);
-    }
-  }, [token, location.pathname]);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
     setMenuOpen(false);
+    await logout();
     navigate("/login");
   };
+
+  const role = user?.role;
+  const isAdmin = !!user?.isAdmin;
+  const profilePic = user?.profilePicture?.filename;
+  const userName = user?.name || "";
+  const isLoggedIn = isAuthenticated || !!token;
 
   const isActive = (path) => location.pathname === path ? "nav-link active" : "nav-link";
 
@@ -66,7 +52,7 @@ function Navbar() {
         <Link to="/" className={isActive("/")}>Home</Link>
         <Link to="/jobs" className={isActive("/jobs")}>Jobs</Link>
 
-        {token ? (
+        {isLoggedIn ? (
           <>
             <Link to="/dashboard" className={isActive("/dashboard")}>Dashboard</Link>
             <Link to="/recommendations" className={isActive("/recommendations")}>🤖 AI Match</Link>

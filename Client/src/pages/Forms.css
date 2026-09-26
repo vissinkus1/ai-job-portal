@@ -1,0 +1,81 @@
+/* ═══════════════════════════════════════════════════════════════
+   Post Job / Edit Job — Form Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Form card enhancements ────────────────────────────────── */
+.page-container .profile-form-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.page-container .profile-form-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+    opacity: 0.7;
+}
+
+/* ─── Form grid for side-by-side fields ─────────────────────── */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ─── Rich text editor integration ──────────────────────────── */
+.quill-container {
+    border-radius: var(--input-radius, 10px);
+    overflow: hidden;
+}
+
+.quill-container .ql-toolbar {
+    background: var(--surface-1);
+    border-color: var(--glass-border) !important;
+    border-radius: var(--input-radius, 10px) var(--input-radius, 10px) 0 0;
+}
+
+.quill-container .ql-container {
+    background: var(--surface-1);
+    border-color: var(--glass-border) !important;
+    border-radius: 0 0 var(--input-radius, 10px) var(--input-radius, 10px);
+    color: var(--text-color);
+    min-height: 180px;
+    font-size: 14.5px;
+}
+
+.quill-container .ql-editor {
+    min-height: 180px;
+}
+
+.quill-container .ql-editor.ql-blank::before {
+    color: var(--text-faint);
+    font-style: normal;
+}
+
+/* ─── Field group spacing ───────────────────────────────────── */
+.page-container .form-group + .form-group {
+    margin-top: 6px;
+}
+
+/* ─── Settings danger zone ──────────────────────────────────── */
+.settings-danger-zone {
+    border: 1px solid rgba(255, 60, 60, 0.2);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    background: rgba(255, 60, 60, 0.03);
+}
+
+.settings-danger-zone h2 {
+    color: #ff4d4d;
+    margin-bottom: 8px;
+}

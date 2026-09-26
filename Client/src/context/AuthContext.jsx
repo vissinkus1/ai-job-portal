@@ -5,9 +5,9 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem("token"));
+    const [token, setToken] = useState(() => localStorage.getItem("token"));
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!!localStorage.getItem("token"));
 
     // Initial load - verify token and get user profile
     useEffect(() => {
@@ -36,15 +36,40 @@ export function AuthProvider({ children }) {
         loadUser();
     }, [token]);
 
+    const setAuthSession = (newToken, newUser) => {
+        if (newToken) {
+            localStorage.setItem("token", newToken);
+            setToken(newToken);
+        }
+        if (newUser) {
+            setUser(newUser);
+        }
+        setIsAuthenticated(true);
+        setLoading(false);
+    };
+
     const login = async (email, password) => {
         const res = await api.post("/auth/login", { email, password });
-        localStorage.setItem("token", res.data.token);
-        setToken(res.data.token);
-        
-        // Fetch user data right after login
-        const profileRes = await api.get("/profile/me");
-        setUser(profileRes.data);
-        setIsAuthenticated(true);
+        const { token: newToken, user: userData } = res.data;
+
+        if (newToken) {
+            localStorage.setItem("token", newToken);
+            setToken(newToken);
+        }
+
+        if (userData) {
+            setUser(userData);
+            setIsAuthenticated(true);
+        } else {
+            try {
+                const profileRes = await api.get("/profile/me");
+                setUser(profileRes.data);
+                setIsAuthenticated(true);
+            } catch (err) {
+                console.warn("Could not fetch profile during login, using token session", err);
+                setIsAuthenticated(true);
+            }
+        }
         
         return res.data;
     };
@@ -59,7 +84,6 @@ export function AuthProvider({ children }) {
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
-        window.location.href = "/login";
     };
 
     // Use this after profile updates to keep context in sync
@@ -74,7 +98,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, logout, refreshUser }}>
+        <AuthContext.Provider value={{ user, token, isAuthenticated, loading, login, logout, refreshUser, setAuthSession }}>
             {children}
         </AuthContext.Provider>
     );

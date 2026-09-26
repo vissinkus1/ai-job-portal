@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import { useToast } from "../components/ToastContext";
 import "../App.css";
+import "./Auth.css";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1); // 1=email, 2=code, 3=newPassword

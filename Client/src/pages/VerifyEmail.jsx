@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import api from "../services/api";
 import { useToast } from "../components/ToastContext";
+import { useAuth } from "../context/AuthContext";
 import "../App.css";
+import "./Auth.css";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -17,6 +19,7 @@ export default function VerifyEmail() {
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const toast = useToast();
+  const { setAuthSession } = useAuth();
 
   useEffect(() => {
     if (resendCooldown > 0) {
@@ -101,7 +104,12 @@ export default function VerifyEmail() {
       const res = await api.post("/auth/verify-email", { email, code: fullCode });
       toast.success(res.data.message);
       setMessage({ type: "success", text: res.data.message });
-      setTimeout(() => navigate("/dashboard"), 1500);
+      if (res.data?.token) {
+        setAuthSession(res.data.token, res.data.user);
+        setTimeout(() => navigate("/dashboard"), 1200);
+      } else {
+        setTimeout(() => navigate("/login"), 1500);
+      }
     } catch (err) {
       setMessage({ type: "error", text: err.response?.data?.message || "Verification failed" });
     } finally {
